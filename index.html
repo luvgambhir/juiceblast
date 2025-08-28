@@ -27,32 +27,48 @@
         }
 
         /* Navbar */
-        .nav {
-            height: var(--nav-h);
-            display: flex;
-            justify-content: flex-end;
-            font-family: 'Bebas Neue', serif;
-            font-size: 25px;
-            font-weight: 600;
-            padding: 0 48px;
-            gap: 48px;
-            align-items: center;
-            background: radial-gradient(circle at top right, #ffb97a, #ff7105);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            transition: background 0.6s ease;
-        }
+        /* Navbar Styles */
+.nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background: #fff; /* You can change to transparent or gradient */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 15px 20px;
+  z-index: 1000;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
 
-        .nav a {
-            text-decoration: none;
-            color: #000;
-            font-weight: 800;
-        }
+/* Navbar Links */
+.nav a {
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 18px;
+  text-decoration: none;
+  color: #000;
+  margin: 0 15px;
+  transition: color 0.3s ease;
+}
 
-        .nav a.about-link {
-            color: #fff;
-        }
+.nav a:hover {
+  color: #ff6600; /* highlight color */
+}
+
+/* Fix for mobile */
+@media (max-width: 768px) {
+  .nav {
+    justify-content: space-between;
+    padding: 10px 15px;
+  }
+
+  .nav a {
+    font-size: 16px;
+    margin: 0 8px;
+  }
+}
+
 
         /* Hero */
         .hero {
