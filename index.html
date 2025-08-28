@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fruit Blast</title>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Texturina:wght@300;600&family=Bebas+Neue&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --nav-h: 72px;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            margin: 0;
+            height: 100%;
+            font-family: system-ui, sans-serif;
+            scroll-behavior: smooth;
+        }
+
+        /* Navbar */
+        .nav {
+            height: var(--nav-h);
+            display: flex;
+            justify-content: flex-end;
+            font-family: 'Bebas Neue', serif;
+            font-size: 25px;
+            font-weight: 600;
+            padding: 0 48px;
+            gap: 48px;
+            align-items: center;
+            background: radial-gradient(circle at top right, #ffb97a, #ff7105);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            transition: background 0.6s ease;
+        }
+
+        .nav a {
+            text-decoration: none;
+            color: #000;
+            font-weight: 800;
+        }
+
+        .nav a.about-link {
+            color: #fff;
+        }
+
+        /* Hero */
+        .hero {
+            min-height: calc(100vh - var(--nav-h));
+            background: radial-gradient(circle, #ffb97a, #ff6a00);
+            position: relative;
+            display: grid;
+            place-items: center;
+            overflow: hidden;
+            transition: background 0.6s ease;
+        }
+
+        .title,
+        .can {
+            grid-area: 1 / 1;
+        }
+
+        .title {
+            margin: 0;
+            font-size: 160px;
+            font-weight: 400;
+            font-family: 'brush', serif;
+            letter-spacing: 1px;
+            color: #fe7231;
+            text-shadow: 0 18px 28px rgba(0, 0, 0, .35);
+            z-index: 2;
+            transition: color 0.6s ease;
+        }
+
+        .can {
+            width: 400px;
+            height: 400px;
+            z-index: 3;
+            filter: drop-shadow(0 0 40px rgba(0, 0, 0, .35));
+            transform: translateY(120%) rotate(0deg);
+            opacity: 0;
+        }
+
+        .can.animate {
+            animation: riseRotate 0.9s ease forwards;
+        }
+
+        @keyframes riseRotate {
+            0% {
+                transform: translateY(120%) rotate(0deg);
+                opacity: 0;
+            }
+
+            60% {
+                transform: translateY(-20%) rotate(270deg);
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateY(0) rotate(360deg);
+                opacity: 1;
+            }
+        }
+
+        .fruit {
+            position: absolute;
+            width: 300px;
+            opacity: 0.5;
+            z-index: 1;
+            transition: opacity 0.6s ease;
+        }
+
+        .fruit-left {
+            top: 0;
+            left: 0;
+            transform: rotate(180deg);
+        }
+
+        .fruit-right {
+            bottom: 0;
+            right: 0;
+        }
+
+        /* Flavor dots */
+        .flavor-dots {
+            position: absolute;
+            bottom: 40px;
+            display: flex;
+            gap: 12px;
+            z-index: 5;
+        }
+
+        .dot {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: #fff;
+            opacity: 0.4;
+            transition: opacity 0.3s, transform 0.3s;
+            cursor: pointer;
+        }
+
+        .dot.active {
+            opacity: 1;
+            transform: scale(1.3);
+            box-shadow: 0 0 12px currentColor;
+        }
+
+        .hero-para {
+            position: absolute;
+            bottom: 40px;
+            left: 10px;
+            z-index: 5;
+            max-width: 600px;
+            line-height: 1.2;
+            font-family: 'Bebas Neue', serif;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            white-space: normal;
+        }
+
+        /* About Section */
+        .about {
+            position: relative;
+            min-height: 100vh;
+            padding: 80px 48px;
+            background: #ff6a00;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            transition: background 0.8s ease;
+            overflow: hidden;
+        }
+
+        .about::before {
+            content: "";
+            position: absolute;
+            bottom: 20px;
+            right: 40px;
+            width: 500px;
+            height: 500px;
+            background: url('basket.png') no-repeat center/contain;
+            opacity: 40%;
+            z-index: 0;
+            pointer-events: none;
+            transition: opacity 0.8s ease;
+        }
+
+        .about h2,
+        .about p {
+            position: relative;
+            z-index: 1;
+        }
+
+        .about h2 {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 80px;
+            color: #fdfcfc;
+            margin-bottom: 20px;
+            transition: color 0.8s ease;
+        }
+
+        .about p {
+            font-family: 'poppins', sans-serif;
+            font-size: 30px;
+            color: #333;
+            max-width: 800px;
+            line-height: 1.6;
+            transition: color 0.8s ease;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .about p.animate {
+            animation: fadeUp 0.8s ease forwards;
+        }
+
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Products Section */
+        .products {
+            min-height: 100vh;
+            padding: 80px 48px;
+            background: radial-gradient(circle, #ffb97a, #ff6a00);
+            text-align: center;
+        }
+
+        .products h2 {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 60px;
+            color: #ffffff;
+            margin-bottom: 40px;
+        }
+
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 40px;
+        }
+
+        .product-card {
+            border-radius: 16px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+            padding: 24px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            color: #000;
+        }
+
+        .product-card img {
+            max-width: 200px;
+            margin-bottom: 20px;
+        }
+
+        .product-card h3 {
+            margin: 10px 0;
+            font-size: 28px;
+            font-family: 'poppins', sans-serif;
+        }
+
+        .product-card p {
+            font-size: 16px;
+        }
+
+        .product-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Flavor backgrounds */
+        .product-card.orange {
+            background: linear-gradient(135deg, #ffe0b2, #ff6a00);
+        }
+
+        .product-card.grape {
+            background: linear-gradient(135deg, #c084fc, #4b0082);
+            color: #fff;
+        }
+
+        .product-card.mango {
+            background: linear-gradient(135deg, #FFB347, #FF914D, #FF5E0E);
+            color: #fff;
+        }
+
+        .product-card.watermelon {
+            background: linear-gradient(135deg, #ff4e50, #ff6b81, #2ecc71);
+            color: #fff;
+        }
+
+        .product-card.blueberry {
+            background: linear-gradient(135deg, #4b0082, #6a5acd, #00bfff, #ff00ff);
+            color: #fff;
+        }
+
+        .product-card.strawberry {
+            background: linear-gradient(135deg, #ff6b81, #b22222);
+            color: #fff;
+        }
+
+        /* Contact Section */
+        .contact {
+            min-height: 100vh;
+            padding: 80px 48px;
+            background: radial-gradient(circle, #1a1a1a, #000);
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .contact h2 {
+            font-family: 'xtradex', sans-serif;
+            font-size: 60px;
+            margin-bottom: 20px;
+        }
+
+        .contact p {
+            font-size: 18px;
+            margin-bottom: 40px;
+            max-width: 700px;
+        }
+
+        .contact-form {
+            max-width: 600px;
+            width: 100%;
+        }
+
+        .contact-form input,
+        .contact-form textarea {
+            width: 100%;
+            padding: 16px;
+            margin-bottom: 20px;
+            border: none;
+            border-radius: 12px;
+            background: #222;
+            color: #fff;
+            font-size: 16px;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        .contact-form input:focus,
+        .contact-form textarea:focus {
+            background: #333;
+            box-shadow: 0 0 8px #ff6a00;
+        }
+
+        .contact-form button {
+            width: 100%;
+            padding: 16px;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: bold;
+            background: linear-gradient(135deg, #ff6a00, #ff3131);
+            color: #fff;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .contact-form button:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+
+        /* ------------------ RESPONSIVE ------------------ */
+        @media (max-width: 1024px) {
+            .title {
+                font-size: 100px;
+            }
+
+            .can {
+                width: 300px;
+                height: 300px;
+            }
+
+            .about h2,
+            .products h2,
+            .contact h2 {
+                font-size: 48px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav {
+                font-size: 18px;
+                padding: 0 20px;
+                gap: 20px;
+            }
+
+            .title {
+                font-size: 70px;
+                text-align: center;
+            }
+
+            .can {
+                width: 250px;
+                height: 250px;
+            }
+
+            .about,
+            .products,
+            .contact {
+                padding: 60px 20px;
+            }
+
+            .about h2,
+            .products h2,
+            .contact h2 {
+                font-size: 36px;
+            }
+
+            .about p,
+            .contact p {
+                font-size: 16px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .nav {
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                height: auto;
+                padding: 10px;
+                gap: 10px;
+                font-size: 16px;
+            }
+
+            .title {
+                font-size: 50px;
+            }
+
+            .can {
+                width: 200px;
+                height: 200px;
+            }
+
+            .hero-para {
+                font-size: 14px;
+                max-width: 90%;
+            }
+
+            .about h2,
+            .products h2,
+            .contact h2 {
+                font-size: 28px;
+            }
+
+            .about p,
+            .contact p {
+                font-size: 14px;
+            }
+
+            .product-card h3 {
+                font-size: 20px;
+            }
+
+            .product-card p {
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="nav" id="navbar">
+        <a href="#">HOME</a>
+        <a href="#about" class="about-link">ABOUT</a>
+        <a href="#products" class="about-link">PRODUCTS</a>
+        <a href="#contact" class="about-link">CONTACT</a>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero" id="hero">
+        <img src="orange.png" class="fruit fruit-left" id="fruitLeft" alt="Fruit Left">
+        <h1 class="title" id="title">ORANGE BLAST</h1>
+        <img src="orange can.png" class="can" id="can" alt="Can">
+        <img src="orange.png" class="fruit fruit-right" id="fruitRight" alt="Fruit Right">
+
+        <!-- Flavor dots -->
+        <div class="flavor-dots" id="flavorDots"></div>
+        <div class="hero-para" id="heroPara"></div>
+    </section>
+
+    <!-- About Section -->
+    <section class="about" id="about">
+        <h2 id="aboutTitle">ABOUT US</h2>
+        <p id="aboutText">
+            <strong>At Fruit Blast</strong>, we are dedicated to bringing you the freshest and most delicious
+            fruit-flavored beverages.
+            Our drinks are crafted from the finest ingredients, ensuring every sip bursts with flavor and energy.
+            Whether it's Orange Blast, Grape Burst, or Strawberry Splash, we promise a refreshing experience that
+            invigorates your day.
+        </p>
+    </section>
+
+    <!-- Products Section -->
+    <section class="products" id="products">
+        <h2>OUR PRODUCTS</h2>
+        <div class="product-grid">
+            <div class="product-card orange">
+                <img src="orange can.png" alt="Orange Blast">
+                <h3>Orange Blast</h3>
+                <p>A refreshing citrus energy drink packed with ripe oranges.</p>
+            </div>
+            <div class="product-card grape">
+                <img src="grapecan.png" alt="Grape Burst">
+                <h3>Grape Burst</h3>
+                <p>Sweet, juicy grapes give you a refreshing punch to power through the day.</p>
+            </div>
+            <div class="product-card strawberry">
+                <img src="strawberrycan.png" alt="Strawberry Splash">
+                <h3>Strawberry Splash</h3>
+                <p>The sweet-tangy strawberry flavor makes every sip a delicious delight.</p>
+            </div>
+            <div class="product-card mango">
+                <img src="mango can.png" alt="Golden Mango">
+                <h3>Golden Mango</h3>
+                <p>The golden mango burst brings a sunny, tropical sweetness to every sip.</p>
+            </div>
+            <div class="product-card watermelon">
+                <img src="watermenlon can.png" alt="Aqua Rush">
+                <h3>Aqua Rush</h3>
+                <p>Juicy watermelon freshness makes each sip crisp, sweet, and refreshing.</p>
+            </div>
+            <div class="product-card blueberry">
+                <img src="blueberry can.png" alt="Lunar Berry">
+                <h3>Lunar Berry</h3>
+                <p>Rich blueberry notes electrify your taste buds with a cool, cosmic twist.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="contact" id="contact">
+        <h2>CONTACT US</h2>
+        <p>Have questions or ideas? We’d love to hear from you. Fill out the form below or reach us at
+            <strong>hello@futurajuice.com</strong>.
+        </p>
+
+        <form class="contact-form">
+            <input type="text" placeholder="Your Name" required>
+            <input type="email" placeholder="Your Email" required>
+            <textarea rows="5" placeholder="Your Message" required></textarea>
+            <button type="submit">Send Message</button>
+        </form>
+    </section>
+
+    <script>
+        const hero = document.getElementById("hero");
+        const title = document.getElementById("title");
+        const can = document.getElementById("can");
+        const fruitLeft = document.getElementById("fruitLeft");
+        const fruitRight = document.getElementById("fruitRight");
+        const navbar = document.getElementById("navbar");
+        const dotsContainer = document.getElementById("flavorDots");
+        const about = document.getElementById("about");
+        const aboutTitle = document.getElementById("aboutTitle");
+        const aboutText = document.getElementById("aboutText");
+        const products = document.getElementById("products");
+
+        // Flavors
+        const flavors = [
+            {
+                name: "ORANGE BLAST",
+                bg: "radial-gradient(circle, #ffb97a, #ff6a00)",
+                navBg: "radial-gradient(circle at top right, #ffb97a, #ff7105)",
+                color: "#fe7231",
+                can: "orange can.png",
+                fruit: "orange.png",
+                aboutBg: "#ff6a00",
+                aboutText: "#333",
+                productsBg: "radial-gradient(circle, #ffb97a, #ff6a00)",
+                text: `<span style="color: #FFA351; font-size: 20px; font-family: 'Neue Regrade', sans-serif; font-weight: 700; text-shadow: 5px 4px 4px rgba(0,0,0,0.25);">Fuel your day</span><span style="color: #FFFFFF; font-size: 18px; font-family: 'Neue Regrade', sans-serif; font-weight: 400; text-shadow: 5px 4px 4px rgba(0,0,0,0.25);"> with the electrifying taste of Orange Blast. Packed with the juicy tang of ripe oranges, this drink delivers a surge of refreshing citrus energy.</span>`
+            },
+            {
+                name: "GRAPE BURST",
+                bg: "radial-gradient(circle, #c084fc, #4b0082)",
+                navBg: "radial-gradient(circle at top right, #9d4edd, #4b0082)",
+                color: "#5B0094",
+                can: "grapecan.png",
+                fruit: "grape2.png",
+                aboutBg: "#4b0082",
+                aboutText: "#fff",
+                productsBg: "radial-gradient(circle, #c084fc, #4b0082)",
+                text: `<span style="color: #B05AFF; font-size: 20px; font-family: 'Neue Regrade', sans-serif; font-weight: 700; text-shadow: 5px 4px 4px rgba(0,0,0,0.25);">Boost your energy</span><span style="color: #FFFFFF; font-size: 18px; font-family: 'Neue Regrade', sans-serif; font-weight: 400; text-shadow: 5px 4px 4px rgba(0,0,0,0.25);"> with the bold taste of Grape Burst. Sweet, juicy grapes give you a refreshing grape punch to power through the day.</span>`
+            },
+            {
+                name: "STRAWBERRY SPLASH",
+                bg: "radial-gradient(circle, #ff6b81, #b22222)",
+                navBg: "radial-gradient(circle at top right, #ff6b81, #b22222)",
+                color: "#FF3131",
+                can: "strawberrycan.png",
+                fruit: "strawberry.png",
+                aboutBg: "#b22222",
+                aboutText: "#fff",
+                productsBg: "radial-gradient(circle, #ff6b81, #b22222)",
+                text: `<span style="color: #FF3131; font-size: 20px; font-family: 'Neue Regrade', sans-serif; font-weight: 700; text-shadow: 5px 4px 4px rgba(0,0,0,0.25);">Refresh yourself</span><span style="color: #FFFFFF; font-size: 18px; font-family: 'Neue Regrade', sans-serif; font-weight: 400; text-shadow: 5px 4px 4px rgba(0,0,0,0.25);"> with Strawberry Splash. The sweet-tangy strawberry flavor makes every sip a delicious delight.</span>`
+            }
+        ];
+
+        let current = 0;
+
+        // Create dots
+        flavors.forEach((f, i) => {
+            const dot = document.createElement("div");
+            dot.className = "dot";
+            dot.style.color = f.color;
+            dot.addEventListener("click", () => switchFlavor(i));
+            dotsContainer.appendChild(dot);
+        });
+
+        const dots = document.querySelectorAll(".dot");
+
+        function switchFlavor(index) {
+            current = index;
+            const f = flavors[current];
+
+            hero.style.background = f.bg;
+            navbar.style.background = f.navBg;
+            title.textContent = f.name;
+            title.style.color = f.color;
+            can.src = f.can;
+            fruitLeft.src = f.fruit;
+            fruitRight.src = f.fruit;
+            can.style.filter = `drop-shadow(0 0 50px ${f.color})`;
+
+            can.classList.remove("animate");
+            void can.offsetWidth;
+            can.classList.add("animate");
+
+            dots.forEach((d, i) => {
+                d.classList.toggle("active", i === current);
+                if (i === current) d.style.background = f.color;
+                else d.style.background = "#fff";
+            });
+
+            heroPara.innerHTML = f.text;
+
+            about.style.background = f.aboutBg;
+            aboutTitle.style.color = "#fff";
+            aboutText.style.color = f.aboutText;
+
+            products.style.background = f.productsBg;
+
+            aboutText.classList.remove("animate");
+            void aboutText.offsetWidth;
+            aboutText.classList.add("animate");
+        }
+
+        // Swipe detection (mouse + touch)
+        let startX = 0;
+        let isDown = false;
+
+        hero.addEventListener("mousedown", (e) => {
+            isDown = true;
+            startX = e.clientX;
+        });
+        hero.addEventListener("mouseup", (e) => {
+            if (!isDown) return;
+            isDown = false;
+            let diff = e.clientX - startX;
+            if (diff > 50) switchFlavor((current - 1 + flavors.length) % flavors.length);
+            if (diff < -50) switchFlavor((current + 1) % flavors.length);
+        });
+
+        hero.addEventListener("touchstart", (e) => {
+            startX = e.touches[0].clientX;
+        });
+        hero.addEventListener("touchend", (e) => {
+            let diff = e.changedTouches[0].clientX - startX;
+            if (diff > 50) switchFlavor((current - 1 + flavors.length) % flavors.length);
+            if (diff < -50) switchFlavor((current + 1) % flavors.length);
+        });
+
+        // Init first flavor
+        switchFlavor(0);
+    </script>
+</body>
+
+</html>
